@@ -1,0 +1,1 @@
+message={"message":+{"header":+{"operationCode":+"CANALESMOVILES_Usuario_Login","origin":+{"country":+"CR","channel":+"SECAN","token":+"","user":+"<%= username %>","server":+"31.183.60.185"},"target":+{+"country":+"CR"+}},"key":+{"identifier":"<%= username %>","country":"CR","token":"","password":"<%= encrypted_password %>"}}}
