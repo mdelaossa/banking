@@ -38,7 +38,7 @@ defmodule Bank.Institution.BACNicaragua do
 
   defp des3_ecb_encrypt(password, crypto \\ "")
   defp des3_ecb_encrypt("", crypto), do: crypto
-  defp des3_ecb_encrypt(<<to_encrypt :: bytes-size(8), password :: binary>>, crypto) do
+  defp des3_ecb_encrypt(<<to_encrypt :: bytes-size(8)>> <> password, crypto) do
     des3_ecb_encrypt(password, crypto <> :crypto.block_encrypt(:des3_cbc, @des3_key, @ivec, to_encrypt))
   end
 
