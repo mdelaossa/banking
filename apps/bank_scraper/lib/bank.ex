@@ -8,14 +8,14 @@ defmodule Bank do
 
   ## Examples
 
-    iex> Bank.find_institution("Example")
-    {:ok, %Bank.Institution{bank: Bank.Institution.Example, name: "Example Bank", accounts: []}}
+      iex> Bank.find_institution("Example")
+      {:ok, %Bank.Institution{bank: Bank.Institution.Example, name: "Example Bank", accounts: []}}
 
-    iex> Bank.find_institution(Example)
-    {:ok, %Bank.Institution{bank: Bank.Institution.Example, name: "Example Bank", accounts: []}}
+      iex> Bank.find_institution(Example)
+      {:ok, %Bank.Institution{bank: Bank.Institution.Example, name: "Example Bank", accounts: []}}
 
-    iex> Bank.find_institution(DoesNotExist)
-    {:error, "No Institution defined by that module name"}
+      iex> Bank.find_institution(DoesNotExist)
+      {:error, "No Institution defined by that module name"}
 
   """
   @spec find_institution(String.t | atom) :: {:ok, %Bank.Institution{}} | {:error, any}
@@ -40,15 +40,15 @@ defmodule Bank do
 
   ## Examples
 
-    iex> Bank.find_institution!(Example) |> Bank.fetch_accounts
-    {:ok, %Bank.Institution{
-      bank: Bank.Institution.Example,
-      name: "Example Bank",
-      accounts: [%Bank.Account{bank: Bank.Institution.Example, balance: 0, currency: :USD, type: :savings},
-                 %Bank.Account{bank: Bank.Institution.Example, balance: 0, currency: :NIO, type: :credit},
-                 %Bank.Account{bank: Bank.Institution.Example, balance: 0, currency: :USD, type: :credit},
-                 %Bank.Account{bank: Bank.Institution.Example, balance: 0, currency: :USD, type: :loan}]
-    }}
+      iex> Bank.find_institution!(Example) |> Bank.fetch_accounts
+      {:ok, %Bank.Institution{
+        bank: Bank.Institution.Example,
+        name: "Example Bank",
+        accounts: [%Bank.Account{bank: Bank.Institution.Example, balance: 0, currency: :USD, type: :savings},
+                   %Bank.Account{bank: Bank.Institution.Example, balance: 0, currency: :NIO, type: :credit},
+                   %Bank.Account{bank: Bank.Institution.Example, balance: 0, currency: :USD, type: :credit},
+                   %Bank.Account{bank: Bank.Institution.Example, balance: 0, currency: :USD, type: :loan}]
+      }}
 
   """
   @spec fetch_accounts(%Bank.Institution{}) :: {:ok, %Bank.Institution{}}
@@ -70,17 +70,19 @@ defmodule Bank do
     - end_date (DateTime)
     - type: (List[atom]) - Will filter by type given
 
+
   ## Examples
 
-    iex> [account | _] = Bank.find_institution!(Example) |> Bank.fetch_accounts!
-    ...> Bank.fetch_transactions(account)
-    {:ok, %Bank.Account{bank: Bank.Institution.Example, type: :savings, currency: :USD, balance: 3778,
-                        transactions: [
-                          %Bank.Account.Transaction{value: 5000, payee: "Someone", datetime: @example_datetime},
-                          %Bank.Account.Transaction{value: 2500, payee: "Someone", debit: false, datetime: @example_datetime},
-                          %Bank.Account.Transaction{value: 1278, payee: "Someone else", datetime: @example_datetime}
-                        ]
-    }}
+
+      iex> [account | _] = Bank.find_institution!(Example) |> Bank.fetch_accounts!
+      ...> Bank.fetch_transactions(account)
+      {:ok, %Bank.Account{bank: Bank.Institution.Example, type: :savings, currency: :USD, balance: 3778,
+        transactions: [
+          %Bank.Account.Transaction{value: 5000, payee: "Someone", datetime: @example_datetime},
+          %Bank.Account.Transaction{value: 2500, payee: "Someone", debit: false, datetime: @example_datetime},
+          %Bank.Account.Transaction{value: 1278, payee: "Someone else", datetime: @example_datetime}
+        ]
+      }}
 
   """
   @spec fetch_transactions(%Bank.Account{}, keyword) :: {:ok, %Bank.Account{}}
@@ -92,7 +94,7 @@ defmodule Bank do
     with attributes <- institution.__info__(:attributes),
          behaviours <- Keyword.get(attributes, :behaviour),
          true <- Enum.member?(behaviours, Bank.Institution),
-         institution <- institution.init
+         institution <- institution.init([])
     do {:ok, institution}
     else _ -> {:error, "No Institution defined by that module name"}
     end
