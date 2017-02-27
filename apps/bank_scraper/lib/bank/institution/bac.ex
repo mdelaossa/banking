@@ -18,7 +18,7 @@ defmodule Bank.Institution.BACNicaragua do
 
   # === Behaviour implementation ===
 
-  @spec init(keyword) :: Bank.Institution.t
+  @lint {Credo.Check.Readability.Specs, false}
   def init([username: username, password: password]) do
     super([username: username, password: encrypt_password(password)])
   end
