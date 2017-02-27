@@ -8,10 +8,10 @@ defmodule Bank.Institution do
   defstruct bank: nil, name: nil, accounts: [], credentials: []
 
   defmacro __using__(opts) do
+    unless opts[:name] != nil, do: raise ArgumentError, message: ":name option is required when `use`ing Bank.Institution"
+
     quote bind_quoted: [opts: opts] do
       @behaviour Bank.Institution
-
-      unless opts[:name] != nil, do: raise ArgumentError, message: ":name option is required when `use`ing Bank.Institution"
 
       @name opts[:name]
 
