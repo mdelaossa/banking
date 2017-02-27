@@ -18,7 +18,7 @@ defmodule Bank do
       {:error, "No Institution defined by that module name"}
 
   """
-  @spec find_institution(String.t | atom) :: {:ok, %Bank.Institution{}} | {:error, any}
+  @spec find_institution(String.t | atom) :: {:ok, Bank.Institution.t} | {:error, any}
   def find_institution(name) when is_nil(name), do: {:error, "Name must be binary or atom"}
   def find_institution(name) when is_binary(name) or is_atom(name) do
     Bank.Institution
@@ -27,7 +27,7 @@ defmodule Bank do
   end
   def find_institution(_), do: {:error, "Name must be binary or atom"}
 
-  @spec find_institution!(String.t | atom) :: %Bank.Institution{}
+  @spec find_institution!(String.t | atom) :: Bank.Institution.t
   def find_institution!(name) when is_binary(name) or is_atom(name) do
     case find_institution(name) do
       {:ok, institution} -> institution
@@ -51,14 +51,14 @@ defmodule Bank do
       }}
 
   """
-  @spec fetch_accounts(%Bank.Institution{}) :: {:ok, %Bank.Institution{}}
+  @spec fetch_accounts(Bank.Institution.t) :: {:ok, Bank.Institution.t}
   def fetch_accounts(%Bank.Institution{bank: bank} = struct) do
-    {:ok, %{struct | accounts: bank.accounts}}
+    {:ok, %{struct | accounts: bank.accounts(struct)}}
   end
 
-  @spec fetch_accounts!(%Bank.Institution{}) :: [%Bank.Account{}]
-  def fetch_accounts!(%Bank.Institution{bank: bank}) do
-    bank.accounts
+  @spec fetch_accounts!(Bank.Institution.t) :: [Bank.Account.t]
+  def fetch_accounts!(%Bank.Institution{bank: bank} = struct) do
+    bank.accounts struct
   end
 
   @doc """
@@ -70,9 +70,7 @@ defmodule Bank do
     - end_date (DateTime)
     - type: (List[atom]) - Will filter by type given
 
-
   ## Examples
-
 
       iex> [account | _] = Bank.find_institution!(Example) |> Bank.fetch_accounts!
       ...> Bank.fetch_transactions(account)
@@ -85,7 +83,7 @@ defmodule Bank do
       }}
 
   """
-  @spec fetch_transactions(%Bank.Account{}, keyword) :: {:ok, %Bank.Account{}}
+  @spec fetch_transactions(Bank.Account.t, keyword) :: {:ok, Bank.Account.t}
   def fetch_transactions(%Bank.Account{bank: bank} = struct, opts \\ []) do
     {:ok, bank.transactions(struct, opts)}
   end

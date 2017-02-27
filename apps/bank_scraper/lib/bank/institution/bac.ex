@@ -2,29 +2,30 @@ defmodule Bank.Institution.BACNicaragua do
   @moduledoc """
   BAC Nicaragua SOAP/JSON API fetcher
   """
-  require EEx
-
   use Bank.Institution, name: "BAC Nicaragua"
 
   use Tesla, only: ~w(get post)a, docs: false
-  plug Tesla.Middleware.BaseUrl, "https://www.e-bac.net/sbefx/"
-  adapter Tesla.Adapter.Hackney
+
+  require EEx
 
   # Key extracted from the bank's Android APK
   @des3_key ["tmzr1oau", "a9cdfg+2", "5-xpmn=="]
   # yay for insecure crypto!
   @ivec <<0, 0, 0, 0, 0, 0, 0, 0>>
 
+  plug Tesla.Middleware.BaseUrl, "https://www.e-bac.net/sbefx/"
+  adapter Tesla.Adapter.Hackney
+
   # === Behaviour implementation ===
 
-  @spec init(keyword) :: %Bank.Institution{}
+  @spec init(keyword) :: Bank.Institution.t
   def init([username: username, password: password]) do
     super([username: username, password: encrypt_password(password)])
   end
 
-  @spec accounts() :: [%Bank.Account{}]
-  def accounts do
-    []
+  @spec accounts(Bank.Institution.t) :: [Bank.Account.t]
+  def accounts(%Bank.Institution{} = bank) do
+    get_accounts(bank.credentials)
   end
 
   # === End Behaviour implementation ===
@@ -54,8 +55,14 @@ defmodule Bank.Institution.BACNicaragua do
     do
       {:ok, %{bank | credentials: Keyword.put(bank.credentials, :token, token)}}
     else
-      _ -> {:error, bank}
+      error = %Tesla.Env{} -> {:error, :http, error}
+      _ -> {:error, :error, bank}
     end
+  end
+
+  # The token changes after every request, so it must be kept updated
+  defp update_token(%Bank.Institution{}, response) do
+
   end
 
   defp get_accounts(credentials) do
